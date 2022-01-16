@@ -3,7 +3,7 @@
 2. Install Python packages:
 
 ```shell
-run sudo pip install -r [requirements.txt](requirements.txt)
+run sudo pip install -r requirements.txt
 ```
 
 3. Edit the script [getdata.py](getdata.py) to add your server host name or IP
