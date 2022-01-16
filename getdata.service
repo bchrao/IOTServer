@@ -1,0 +1,11 @@
+[Unit]
+Description=Get Weather Data
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/pi/Documents/getdata2.py
+
+[Install]
+WantedBy=multi-user.target
+
