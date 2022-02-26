@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Reference: https://thingsboard.io/docs/samples/raspberry/temperature/
-
+import os
 import smbus2
 import bme280
 import socket
@@ -10,8 +10,9 @@ import paho.mqtt.client as mqtt
 import json
 from gpiozero import CPUTemperature
 
-
+local_cache = r'/home/pi/Documents/getdata.tmp'
 Host = "Host"
+mqtt_port = 1883
 port = 1
 address = 0x77
 bus = smbus2.SMBus(port)
@@ -22,7 +23,7 @@ next_reading = time.time()
 
 # MQTT Client Config
 client = mqtt.Client()
-client.connect(Host, 1883, 60)
+client.connect(Host, mqtt_port, 60)
 client.loop_start()
 
 try:
@@ -38,8 +39,29 @@ try:
         sensor_data['humidity'] = humid
         sensor_data['cputemp'] = cpuf
 
-        # Sending humidity and temperature data
-        client.publish(socket.gethostname(), json.dumps(sensor_data), 1)
+        # Checking if server is available
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        result = sock.connect_ex((Host,mqtt_port))
+        if result == 0:
+           # if local data exists, upload and delete local data
+           if os.path.exists(local_cache):
+               print('file already exists')
+               with open(local_cache, 'r') as lc:
+                   content = lc.read()
+                   lc.close()
+                   #### left off here
+           else:
+               # create a file
+               with open(file_path, 'w') as fp:
+                   # uncomment if you want empty file
+                   fp.write('This is first line')
+             # read local, add to sensor_data and delete local
+           # Sending humidity and temperature data
+           client.publish(socket.gethostname(), json.dumps(sensor_data), 1)
+        else:
+            # Append sensor_data to local storage
+            print()
+        sock.close()
 
         next_reading += INTERVAL
         sleep_time = next_reading-time.time()
