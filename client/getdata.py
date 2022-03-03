@@ -38,12 +38,13 @@ try:
             with open(local_cache, 'a') as localfile:
                 json.dump(sensor_data, localfile)
         else:
-            with open(file_path, 'w') as localfile:
+            with open(local_cache, 'w') as localfile:
                 json.dump(sensor_data,localfile)
         
         # Checking if server is available
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex((Host,mqtt_port))
+        sock.close()
 
         if result == 0:
             # MQTT Client Config
@@ -53,7 +54,7 @@ try:
             
             # if local data exists, upload and delete local data
             if os.path.exists(local_cache):
-                print("${local_cache} already exists")
+                print("${local_cache} exists")
                 with open(local_cache, 'r') as localfile:
                     sensor_data = json.load(localfile)
                     # Sending humidity and temperature data
@@ -68,7 +69,6 @@ try:
         else:
             print("Could not connect to ${Host} on port ${mqtt_port}")
         
-        sock.close()
         next_reading += INTERVAL
         sleep_time = next_reading-time.time()
         if sleep_time > 0:
