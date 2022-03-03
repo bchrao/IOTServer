@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-
 # Reference: https://thingsboard.io/docs/samples/raspberry/temperature/
+
 import os
 import smbus2
 import bme280
@@ -44,7 +44,7 @@ try:
         # Checking if server is available
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         result = sock.connect_ex((Host,mqtt_port))
-        
+
         if result == 0:
             # MQTT Client Config
             client = mqtt.Client()
